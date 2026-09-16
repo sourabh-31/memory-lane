@@ -11,10 +11,8 @@ import { WORLDS } from "../../data/worlds";
     WORLDS.map((world, index) => (
       <div
         data-world-layer={index}
-        class:list={[
-          "absolute inset-0 bg-cover bg-center transition-opacity duration-550 ease-out",
-          index === 0 ? "opacity-100" : "opacity-0",
-        ]}
+        data-src={world.image.src}
+        class="absolute inset-0 bg-cover bg-center opacity-0 transition-opacity duration-550 ease-out"
         style={{ backgroundImage: `url(${world.image.src})` }}
       />
     ))
@@ -33,11 +31,40 @@ import { WORLDS } from "../../data/worlds";
     document.querySelectorAll<HTMLElement>("[data-world-layer]"),
   );
 
+  function reveal(layer: HTMLElement) {
+    layer.classList.remove("opacity-0");
+    layer.classList.add("opacity-100");
+  }
+
+  function hide(layer: HTMLElement) {
+    layer.classList.remove("opacity-100");
+    layer.classList.add("opacity-0");
+  }
+
+  // Reveal a layer only once its image has actually finished loading/decoding,
+  // so the fade-in never starts against a still-downloading (blank) image.
+  const ready = layers.map(() => false);
+  const wantsActive = layers.map(() => false);
+  layers.forEach((layer, index) => {
+    const src = layer.dataset.src;
+    if (!src) return;
+    const loader = new Image();
+    loader.onload = () => {
+      ready[index] = true;
+      if (wantsActive[index]) reveal(layer);
+    };
+    loader.src = src;
+  });
+
   subscribeWorld((state) => {
     layers.forEach((layer, index) => {
       const active = index === state.index;
-      layer.classList.toggle("opacity-100", active);
-      layer.classList.toggle("opacity-0", !active);
+      wantsActive[index] = active;
+      if (active && ready[index]) {
+        reveal(layer);
+      } else {
+        hide(layer);
+      }
     });
   });
 </script>

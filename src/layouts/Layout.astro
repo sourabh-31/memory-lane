@@ -1,6 +1,9 @@
 ---
 import { Font } from "astro:assets";
 import "../styles/global.css";
+import { WORLDS } from "../data/worlds";
+
+const initialWorldImage = WORLDS[0].image;
 ---
 
 <!doctype html>
@@ -15,6 +18,13 @@ import "../styles/global.css";
 
     <Font preload cssVariable="--font-hanken-grotesk" />
     <Font preload cssVariable="--font-recursive" />
+    <link
+      rel="preload"
+      as="image"
+      type="image/avif"
+      href={initialWorldImage.src}
+      fetchpriority="high"
+    />
   </head>
   <body class="bg-ink font-sans text-cream antialiased">
     <slot />

@@ -7,7 +7,7 @@ import QueueFill from "phosphor-astro/QueueFill.astro";
 import SpeakerSimpleHighFill from "phosphor-astro/SpeakerSimpleHighFill.astro";
 import SpeakerSimpleLowFill from "phosphor-astro/SpeakerSimpleLowFill.astro";
 import SpeakerSimpleSlashFill from "phosphor-astro/SpeakerSimpleSlashFill.astro";
-import { TRACKS } from "../../data/tracks";
+import { TRACKS, trackThumbnail } from "../../data/tracks";
 
 const initialTrack = TRACKS[0];
 ---
@@ -16,8 +16,15 @@ const initialTrack = TRACKS[0];
   class="flex flex-wrap items-center justify-center gap-[clamp(12px,2.4vw,18px)] rounded-[20px] border border-cream/[0.14] bg-panel/70 px-[clamp(13px,2.8vw,18px)] py-[clamp(12px,2.4vw,14px)] shadow-[0_34px_90px_rgba(4,7,13,0.6),0_6px_18px_rgba(4,7,13,0.35)] backdrop-blur-[22px] backdrop-saturate-[1.1]"
 >
   <div
-    class="flex h-[clamp(46px,11vw,56px)] w-[clamp(46px,11vw,56px)] flex-none items-center justify-center rounded-[14px] bg-cream/10 shadow-[inset_0_0_0_1px_rgba(244,233,220,0.16)]"
+    class="h-[clamp(46px,11vw,56px)] w-[clamp(46px,11vw,56px)] flex-none overflow-hidden rounded-[14px] bg-cream/10 shadow-[inset_0_0_0_1px_rgba(244,233,220,0.16)]"
   >
+    <img
+      id="ml-now-art"
+      src={trackThumbnail(initialTrack)}
+      alt=""
+      aria-hidden="true"
+      class="h-full w-full object-cover"
+    />
   </div>
 
   <div class="flex min-w-30 flex-1 flex-col gap-2">
@@ -143,6 +150,7 @@ const initialTrack = TRACKS[0];
     setVolume,
     toggleMute,
   } from "../../scripts/stores/audio-store";
+  import { trackThumbnail } from "../../data/tracks";
   import { subscribePanel, togglePanel } from "../../scripts/stores/panel-store";
 
   const QUEUE_BTN_ACTIVE_CLASS = "bg-cream/24";
@@ -159,6 +167,7 @@ const initialTrack = TRACKS[0];
     document.getElementById(id) as T;
 
   const nowTitleEl = el<HTMLElement>("ml-now-title");
+  const nowArtEl = el<HTMLImageElement>("ml-now-art");
   const iconPauseEl = el<HTMLElement>("ml-icon-pause");
   const iconPlayEl = el<HTMLElement>("ml-icon-play");
 
@@ -184,6 +193,7 @@ const initialTrack = TRACKS[0];
   subscribeAudio((state) => {
     const track = currentTrack();
     nowTitleEl.textContent = track ? track.title : "";
+    nowArtEl.src = track ? trackThumbnail(track) : "";
 
     iconPauseEl.classList.toggle("hidden", !state.playing);
     iconPlayEl.classList.toggle("hidden", state.playing);

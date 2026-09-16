@@ -1,20 +1,26 @@
 export interface Track {
   title: string;
   artist: string;
-  src: string;
+  videoId: string;
+}
+
+export function trackThumbnail(track: Track): string {
+  // mqdefault is true 16:9 — hqdefault is a legacy 4:3 frame with
+  // black letterbox bars baked into the image itself.
+  return `https://i.ytimg.com/vi/${track.videoId}/mqdefault.jpg`;
 }
 
 export const TRACKS: Track[] = [
-  { title: "Let Go", artist: "Ark Patrol", src: "/audio/let-go.mp3" },
-  { title: "Selfless", artist: "Flawed Mangoes", src: "/audio/selfless.mp3" },
-  { title: "Closer", artist: "Nuages", src: "/audio/closer.mp3" },
-  { title: "Dramamine", artist: "Modest Mouse", src: "/audio/dramamine.mp3" },
+  { title: "drowning", artist: "vague003", videoId: "plffo_TlTYQ" },
+  { title: "drifting", artist: "blut own", videoId: "-RO4OChykaA" },
   {
-    title: "Sunset Lover",
-    artist: "Petit Biscuit",
-    src: "/audio/sunset-lover.mp3",
+    title: "if it's real, then i'll stay",
+    artist: "bonjr",
+    videoId: "ZzarAeToKdo",
   },
-  { title: "Nightcall", artist: "Kavinsky", src: "/audio/nightcall.mp3" },
-  { title: "Wait", artist: "M83", src: "/audio/wait.mp3" },
-  { title: "Vanished", artist: "Crystal Castles", src: "/audio/vanished.mp3" },
+  {
+    title: "Let Go",
+    artist: "Ark Patrol",
+    videoId: "Ts5ZiojkOe4",
+  },
 ];

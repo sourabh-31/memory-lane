@@ -1,6 +1,6 @@
 ---
 import XBold from "phosphor-astro/XBold.astro";
-import { TRACKS } from "../../data/tracks";
+import { TRACKS, trackThumbnail } from "../../data/tracks";
 ---
 
 <div
@@ -41,7 +41,15 @@ import { TRACKS } from "../../data/tracks";
           data-track-index={index}
           class="flex w-full items-center gap-3.5 rounded-xl border-0 bg-transparent px-2.5 py-2.5 text-left transition-colors duration-200 hover:bg-cream/9"
         >
-          <span class="flex h-10 w-10 flex-none items-center justify-center rounded-[10px] bg-cream/10 shadow-[inset_0_0_0_1px_rgba(244,233,220,0.14)]" />
+          <span class="h-10 w-10 flex-none overflow-hidden rounded-[10px] bg-cream/10 shadow-[inset_0_0_0_1px_rgba(244,233,220,0.14)]">
+            <img
+              src={trackThumbnail(track)}
+              alt=""
+              aria-hidden="true"
+              loading="lazy"
+              class="h-full w-full object-cover"
+            />
+          </span>
           <span class="flex min-w-0 flex-1 flex-col gap-0.75">
             <span
               data-track-title

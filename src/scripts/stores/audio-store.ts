@@ -11,6 +11,38 @@ interface AudioState {
   missing: Record<number, boolean>;
 }
 
+interface YTPlayer {
+  loadVideoById(videoId: string): void;
+  cueVideoById(videoId: string): void;
+  playVideo(): void;
+  pauseVideo(): void;
+  seekTo(seconds: number, allowSeekAhead: boolean): void;
+  setVolume(volume: number): void;
+  mute(): void;
+  unMute(): void;
+  getDuration(): number;
+  getCurrentTime(): number;
+  getPlayerState(): number;
+}
+
+declare global {
+  interface Window {
+    YT?: { Player: new (host: HTMLElement, options: unknown) => YTPlayer };
+    onYouTubeIframeAPIReady: () => void;
+  }
+}
+
+const PROGRESS_INTERVAL_MS = 400;
+
+const PLAYER_STATE = {
+  UNSTARTED: -1,
+  ENDED: 0,
+  PLAYING: 1,
+  PAUSED: 2,
+  BUFFERING: 3,
+  CUED: 5,
+};
+
 function clamp(value: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, value));
 }
@@ -25,10 +57,6 @@ const state: AudioState = {
   started: false,
   missing: {},
 };
-
-const audio = new Audio();
-audio.preload = "metadata";
-audio.volume = state.vol;
 
 const listeners = new Set<(state: AudioState) => void>();
 
@@ -50,6 +78,113 @@ export function trackCount() {
   return TRACKS.length;
 }
 
+let player: YTPlayer | null = null;
+let playerReady = false;
+let hasLoadedTrack = false;
+let pendingLoad: { index: number; autoplay: boolean } | null = null;
+let progressTimer: number | null = null;
+
+function loadIframeApi() {
+  if (document.getElementById("ml-yt-iframe-api")) return;
+  const script = document.createElement("script");
+  script.id = "ml-yt-iframe-api";
+  script.src = "https://www.youtube.com/iframe_api";
+  document.head.appendChild(script);
+}
+
+function createPlayerHost(): HTMLElement {
+  const host = document.createElement("div");
+  host.id = "ml-yt-host";
+  Object.assign(host.style, {
+    position: "fixed",
+    left: "0",
+    bottom: "0",
+    width: "2px",
+    height: "2px",
+    opacity: "0",
+    pointerEvents: "none",
+  });
+  document.body.appendChild(host);
+  return host;
+}
+
+function startProgressTimer() {
+  stopProgressTimer();
+  progressTimer = window.setInterval(() => {
+    if (!player) return;
+    state.time = player.getCurrentTime() || 0;
+    notify();
+  }, PROGRESS_INTERVAL_MS);
+}
+
+function stopProgressTimer() {
+  if (progressTimer !== null) {
+    clearInterval(progressTimer);
+    progressTimer = null;
+  }
+}
+
+function initPlayer() {
+  const host = createPlayerHost();
+  player = new window.YT!.Player(host, {
+    width: "2",
+    height: "2",
+    playerVars: {
+      autoplay: 0,
+      controls: 0,
+      disablekb: 1,
+      playsinline: 1,
+      modestbranding: 1,
+      rel: 0,
+    },
+    events: {
+      onReady: () => {
+        playerReady = true;
+        player!.setVolume(Math.round(state.vol * 100));
+        if (pendingLoad) {
+          const { index, autoplay } = pendingLoad;
+          pendingLoad = null;
+          load(index, autoplay);
+        }
+      },
+      onStateChange: (event: { data: number }) => {
+        if (event.data === PLAYER_STATE.PLAYING) {
+          state.playing = true;
+          state.started = true;
+          state.dur = player!.getDuration() || state.dur;
+          startProgressTimer();
+        } else if (event.data === PLAYER_STATE.PAUSED) {
+          state.playing = false;
+          stopProgressTimer();
+        } else if (event.data === PLAYER_STATE.ENDED) {
+          state.playing = false;
+          stopProgressTimer();
+          goToTrack(1);
+          return;
+        } else if (event.data === PLAYER_STATE.CUED) {
+          state.dur = player!.getDuration() || 0;
+        }
+        notify();
+      },
+      onError: () => {
+        state.missing[state.i] = true;
+        state.playing = false;
+        stopProgressTimer();
+        notify();
+      },
+    },
+  });
+}
+
+if (typeof window !== "undefined") {
+  window.onYouTubeIframeAPIReady = initPlayer;
+  if (window.YT?.Player) {
+    initPlayer();
+  } else {
+    loadIframeApi();
+  }
+}
+
 function load(index: number, autoplay: boolean) {
   const track = TRACKS[index];
   state.i = index;
@@ -57,19 +192,23 @@ function load(index: number, autoplay: boolean) {
   state.dur = 0;
   notify();
 
-  if (!track || !track.src) {
-    audio.pause();
+  if (!track || !track.videoId) {
+    stopProgressTimer();
     state.playing = false;
     notify();
     return;
   }
 
-  audio.src = track.src;
+  if (!playerReady || !player) {
+    pendingLoad = { index, autoplay };
+    return;
+  }
+
+  hasLoadedTrack = true;
   if (autoplay) {
-    audio.play().catch(() => {
-      state.missing[index] = true;
-      notify();
-    });
+    player.loadVideoById(track.videoId);
+  } else {
+    player.cueVideoById(track.videoId);
   }
 }
 
@@ -83,60 +222,41 @@ export function goToTrack(direction: 1 | -1) {
 }
 
 export function togglePlayback() {
-  if (!audio.src) {
+  if (!playerReady || !player || !hasLoadedTrack) {
     load(state.i, true);
     return;
   }
-  if (audio.paused) {
-    audio.play().catch(() => {
-      state.missing[state.i] = true;
-      notify();
-    });
+  if (player.getPlayerState() === PLAYER_STATE.PLAYING) {
+    player.pauseVideo();
   } else {
-    audio.pause();
+    player.playVideo();
   }
 }
 
 export function seekToFraction(fraction: number) {
-  if (!state.dur) return;
-  audio.currentTime = clamp(fraction, 0, 1) * state.dur;
+  if (!playerReady || !player || !state.dur) return;
+  const seconds = clamp(fraction, 0, 1) * state.dur;
+  player.seekTo(seconds, true);
+  state.time = seconds;
+  notify();
 }
 
 export function setVolume(value: number) {
   const clamped = clamp(value, 0, 1);
-  audio.volume = clamped;
-  audio.muted = false;
   state.vol = clamped;
   state.muted = false;
+  if (playerReady && player) {
+    player.setVolume(Math.round(clamped * 100));
+    player.unMute();
+  }
   notify();
 }
 
 export function toggleMute() {
   state.muted = !state.muted;
-  audio.muted = state.muted;
+  if (playerReady && player) {
+    if (state.muted) player.mute();
+    else player.unMute();
+  }
   notify();
 }
-
-audio.addEventListener("timeupdate", () => {
-  state.time = audio.currentTime;
-  notify();
-});
-audio.addEventListener("loadedmetadata", () => {
-  state.dur = audio.duration;
-  notify();
-});
-audio.addEventListener("ended", () => goToTrack(1));
-audio.addEventListener("play", () => {
-  state.playing = true;
-  state.started = true;
-  notify();
-});
-audio.addEventListener("pause", () => {
-  state.playing = false;
-  notify();
-});
-audio.addEventListener("error", () => {
-  state.playing = false;
-  state.missing[state.i] = true;
-  notify();
-});
