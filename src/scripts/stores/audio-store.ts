@@ -82,7 +82,17 @@ let player: YTPlayer | null = null;
 let playerReady = false;
 let hasLoadedTrack = false;
 let pendingLoad: { index: number; autoplay: boolean } | null = null;
+let pendingSeekFraction: number | null = null;
 let progressTimer: number | null = null;
+let scrubbing = false;
+
+function applyPendingSeek() {
+  if (pendingSeekFraction === null || !player || !state.dur) return;
+  const seconds = clamp(pendingSeekFraction, 0, 1) * state.dur;
+  player.seekTo(seconds, true);
+  state.time = seconds;
+  pendingSeekFraction = null;
+}
 
 function loadIframeApi() {
   if (document.getElementById("ml-yt-iframe-api")) return;
@@ -111,7 +121,7 @@ function createPlayerHost(): HTMLElement {
 function startProgressTimer() {
   stopProgressTimer();
   progressTimer = window.setInterval(() => {
-    if (!player) return;
+    if (!player || scrubbing) return;
     state.time = player.getCurrentTime() || 0;
     notify();
   }, PROGRESS_INTERVAL_MS);
@@ -152,6 +162,7 @@ function initPlayer() {
           state.playing = true;
           state.started = true;
           state.dur = player!.getDuration() || state.dur;
+          applyPendingSeek();
           startProgressTimer();
         } else if (event.data === PLAYER_STATE.PAUSED) {
           state.playing = false;
@@ -163,6 +174,7 @@ function initPlayer() {
           return;
         } else if (event.data === PLAYER_STATE.CUED) {
           state.dur = player!.getDuration() || 0;
+          applyPendingSeek();
         }
         notify();
       },
@@ -233,9 +245,34 @@ export function togglePlayback() {
   }
 }
 
+export function setScrubbing(value: boolean) {
+  scrubbing = value;
+}
+
+export function previewSeekFraction(fraction: number) {
+  if (!state.dur) return;
+  state.time = clamp(fraction, 0, 1) * state.dur;
+  notify();
+}
+
 export function seekToFraction(fraction: number) {
-  if (!playerReady || !player || !state.dur) return;
-  const seconds = clamp(fraction, 0, 1) * state.dur;
+  const clamped = clamp(fraction, 0, 1);
+
+  // Nothing has ever been loaded — start playback and remember where to
+  // land once we actually know the track's duration.
+  if (!hasLoadedTrack) {
+    pendingSeekFraction = clamped;
+    load(state.i, true);
+    return;
+  }
+
+  if (!playerReady || !player || !state.dur) {
+    // Loading is already in flight but metadata hasn't arrived yet.
+    pendingSeekFraction = clamped;
+    return;
+  }
+
+  const seconds = clamped * state.dur;
   player.seekTo(seconds, true);
   state.time = seconds;
   notify();
@@ -247,7 +284,14 @@ export function setVolume(value: number) {
   state.muted = false;
   if (playerReady && player) {
     player.setVolume(Math.round(clamped * 100));
-    player.unMute();
+    // unMute() at volume 0 gets treated as an invalid/ambiguous state by the
+    // embedded player and it silently floors the volume back up — so a drag
+    // down to silence has to go through mute() instead, same as the button.
+    if (clamped <= 0) {
+      player.mute();
+    } else {
+      player.unMute();
+    }
   }
   notify();
 }
@@ -255,8 +299,16 @@ export function setVolume(value: number) {
 export function toggleMute() {
   state.muted = !state.muted;
   if (playerReady && player) {
-    if (state.muted) player.mute();
-    else player.unMute();
+    if (state.muted) {
+      // mute()/isMuted() alone can get out of sync with actual output on the
+      // embedded player, so also drive the numeric volume down as the
+      // authoritative signal.
+      player.mute();
+      player.setVolume(0);
+    } else {
+      player.unMute();
+      player.setVolume(Math.round(state.vol * 100));
+    }
   }
   notify();
 }

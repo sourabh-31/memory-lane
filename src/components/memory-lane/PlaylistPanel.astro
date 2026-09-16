@@ -1,6 +1,6 @@
 ---
 import XBold from "phosphor-astro/XBold.astro";
-import { TRACKS, trackThumbnail } from "../../data/tracks";
+import { TRACKS, trackThumbnail, startCase } from "../../data/tracks";
 ---
 
 <div
@@ -55,7 +55,7 @@ import { TRACKS, trackThumbnail } from "../../data/tracks";
               data-track-title
               class="overflow-hidden text-[14.5px] leading-[1.4] font-medium text-ellipsis whitespace-nowrap text-cream/95"
             >
-              {track.title}
+              {startCase(track.title)}
             </span>
             <span class="overflow-hidden font-mono text-[11px] leading-normal tracking-[0.06em] text-ellipsis whitespace-nowrap text-cream/80">
               {track.artist}

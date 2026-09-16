@@ -7,7 +7,7 @@ import QueueFill from "phosphor-astro/QueueFill.astro";
 import SpeakerSimpleHighFill from "phosphor-astro/SpeakerSimpleHighFill.astro";
 import SpeakerSimpleLowFill from "phosphor-astro/SpeakerSimpleLowFill.astro";
 import SpeakerSimpleSlashFill from "phosphor-astro/SpeakerSimpleSlashFill.astro";
-import { TRACKS, trackThumbnail } from "../../data/tracks";
+import { TRACKS, trackThumbnail, trackLabel } from "../../data/tracks";
 
 const initialTrack = TRACKS[0];
 ---
@@ -32,11 +32,11 @@ const initialTrack = TRACKS[0];
       <div
         id="ml-now-title"
         class="truncate text-[15px] font-medium tracking-[-0.01em]"
-      >{initialTrack.title}</div>
+      >{trackLabel(initialTrack)}</div>
     </div>
     <div
       id="ml-seek"
-      class="relative flex h-4.5 cursor-pointer items-center px-1.5"
+      class="relative flex h-4.5 cursor-pointer touch-none items-center px-1.5"
     >
       <div class="relative h-1 w-full rounded bg-cream/16">
         <div
@@ -147,10 +147,12 @@ const initialTrack = TRACKS[0];
     goToTrack,
     togglePlayback,
     seekToFraction,
+    previewSeekFraction,
+    setScrubbing,
     setVolume,
     toggleMute,
   } from "../../scripts/stores/audio-store";
-  import { trackThumbnail } from "../../data/tracks";
+  import { trackThumbnail, trackLabel } from "../../data/tracks";
   import { subscribePanel, togglePanel } from "../../scripts/stores/panel-store";
 
   const QUEUE_BTN_ACTIVE_CLASS = "bg-cream/24";
@@ -192,7 +194,7 @@ const initialTrack = TRACKS[0];
 
   subscribeAudio((state) => {
     const track = currentTrack();
-    nowTitleEl.textContent = track ? track.title : "";
+    nowTitleEl.textContent = track ? trackLabel(track) : "";
     nowArtEl.src = track ? trackThumbnail(track) : "";
 
     iconPauseEl.classList.toggle("hidden", !state.playing);
@@ -227,12 +229,37 @@ const initialTrack = TRACKS[0];
   muteBtn.addEventListener("click", toggleMute);
   openQueueBtn.addEventListener("click", () => togglePanel("queue"));
 
-  seekEl.addEventListener("click", (event) => {
+  function seekFractionFromClientX(clientX: number): number {
     const rect = seekEl.getBoundingClientRect();
-    const x = event.clientX - (rect.left + 6);
+    const x = clientX - (rect.left + 6);
     const width = rect.width - 12;
-    seekToFraction(x / width);
+    return x / width;
+  }
+
+  let draggingSeek = false;
+
+  seekEl.addEventListener("pointerdown", (event) => {
+    draggingSeek = true;
+    setScrubbing(true);
+    seekEl.setPointerCapture(event.pointerId);
+    seekToFraction(seekFractionFromClientX(event.clientX));
   });
+  seekEl.addEventListener("pointermove", (event) => {
+    if (!draggingSeek) return;
+    // Only preview locally while dragging — committing a real seek on every
+    // pointermove floods the embedded player with overlapping seekTo() calls
+    // that race with each other and with the progress poll.
+    previewSeekFraction(seekFractionFromClientX(event.clientX));
+  });
+  function endSeekDrag(event: PointerEvent) {
+    if (!draggingSeek) return;
+    draggingSeek = false;
+    seekEl.releasePointerCapture(event.pointerId);
+    seekToFraction(seekFractionFromClientX(event.clientX));
+    setScrubbing(false);
+  }
+  seekEl.addEventListener("pointerup", endSeekDrag);
+  seekEl.addEventListener("pointercancel", endSeekDrag);
 
   function setVolumeFromClientX(clientX: number) {
     const rect = volumeEl.getBoundingClientRect();

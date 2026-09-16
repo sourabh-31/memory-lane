@@ -31,7 +31,7 @@ const initialWorld = WORLDS[0];
       <p
         class="m-0 text-[19px] leading-normal tracking-[-0.015em] text-cream/92 text-pretty"
       >
-        This is the playlist of a warrior who keeps travelling to new worlds,
+        This is the playlist of an outsider who keeps travelling to new worlds,
         looking for his own.
       </p>
       <p class="m-0 text-sm leading-[1.75] text-cream/66 text-pretty">
@@ -56,7 +56,9 @@ const initialWorld = WORLDS[0];
       >
         <div class="flex justify-between gap-3">
           <span>Current world</span>
-          <span id="ml-about-world-name" class="text-cream/75">{initialWorld.name}</span>
+          <span id="ml-about-world-name" class="text-cream/75"
+            >{initialWorld.name}</span
+          >
         </div>
       </div>
     </div>
@@ -65,7 +67,10 @@ const initialWorld = WORLDS[0];
 
 <script>
   import { subscribePanel, closePanel } from "../../scripts/stores/panel-store";
-  import { subscribeWorld, currentWorld } from "../../scripts/stores/world-store";
+  import {
+    subscribeWorld,
+    currentWorld,
+  } from "../../scripts/stores/world-store";
 
   const ABOUT_OPEN_CLASSES = ["translate-x-0"];
   const ABOUT_CLOSED_CLASSES = ["translate-x-full"];
