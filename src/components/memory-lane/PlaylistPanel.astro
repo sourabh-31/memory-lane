@@ -1,0 +1,128 @@
+---
+import XBold from "phosphor-astro/XBold.astro";
+import { TRACKS } from "../../data/tracks";
+---
+
+<div
+  id="ml-queue-panel"
+  class="pointer-events-none fixed inset-0 z-12 flex max-h-none translate-y-2.5 scale-[0.985] flex-col overflow-hidden rounded-none border border-cream/[0.14] bg-panel/80 opacity-0 shadow-[0_34px_90px_rgba(4,7,13,0.65),0_6px_18px_rgba(4,7,13,0.4)] backdrop-blur-[28px] backdrop-saturate-[1.1] transition-[opacity,transform] duration-300 ease-[cubic-bezier(0.22,0.61,0.36,1)] sm:absolute sm:inset-x-0 sm:top-auto sm:bottom-[calc(100%+12px)] sm:max-h-[min(52vh,420px)] sm:rounded-[18px]"
+>
+  <div
+    class="flex items-center justify-between gap-3 border-b border-cream/10 px-4.5 py-3.5 pb-3.5"
+  >
+    <div class="flex min-w-0 items-baseline gap-3">
+      <span class="text-base font-medium tracking-[-0.015em] text-white"
+        >Playlist</span
+      >
+      <span
+        id="ml-track-count"
+        class="font-mono text-[10px] leading-normal tracking-[0.16em] text-cream/60 uppercase"
+        >{TRACKS.length} songs</span
+      >
+    </div>
+    <button
+      id="ml-queue-close"
+      type="button"
+      aria-label="Close playlist"
+      class="flex h-7.5 w-7.5 items-center justify-center rounded-full border-0 bg-cream/10 transition-colors duration-200 hover:bg-cream/24"
+    >
+      <XBold class="h-3.25 w-3.25 text-cream/95" aria-hidden="true" />
+    </button>
+  </div>
+
+  <div
+    id="ml-track-list"
+    class="min-h-0 flex-1 overflow-y-auto px-2.5 pt-2 pb-3"
+  >
+    {
+      TRACKS.map((track, index) => (
+        <button
+          type="button"
+          data-track-index={index}
+          class="flex w-full items-center gap-3.5 rounded-xl border-0 bg-transparent px-2.5 py-2.5 text-left transition-colors duration-200 hover:bg-cream/9"
+        >
+          <span class="flex h-10 w-10 flex-none items-center justify-center rounded-[10px] bg-cream/10 shadow-[inset_0_0_0_1px_rgba(244,233,220,0.14)]" />
+          <span class="flex min-w-0 flex-1 flex-col gap-0.75">
+            <span
+              data-track-title
+              class="overflow-hidden text-[14.5px] leading-[1.4] font-medium text-ellipsis whitespace-nowrap text-cream/95"
+            >
+              {track.title}
+            </span>
+            <span class="overflow-hidden font-mono text-[11px] leading-normal tracking-[0.06em] text-ellipsis whitespace-nowrap text-cream/80">
+              {track.artist}
+            </span>
+          </span>
+          <span
+            data-track-tag
+            class="font-mono text-[10.5px] leading-normal tracking-[0.12em] text-cream/75 uppercase"
+          />
+        </button>
+      ))
+    }
+  </div>
+</div>
+
+<script>
+  import { subscribePanel, closePanel } from "../../scripts/stores/panel-store";
+  import { subscribeAudio, playTrack } from "../../scripts/stores/audio-store";
+
+  const QUEUE_OPEN_CLASSES = [
+    "opacity-100",
+    "translate-y-0",
+    "scale-100",
+    "pointer-events-auto",
+  ];
+  const QUEUE_CLOSED_CLASSES = [
+    "opacity-0",
+    "translate-y-2.5",
+    "scale-[0.985]",
+    "pointer-events-none",
+  ];
+
+  const queuePanel = document.getElementById("ml-queue-panel") as HTMLElement;
+  const queueCloseBtn = document.getElementById(
+    "ml-queue-close",
+  ) as HTMLButtonElement;
+  const trackRows = Array.from(
+    document.querySelectorAll<HTMLButtonElement>("[data-track-index]"),
+  );
+
+  subscribePanel((panel) => {
+    const open = panel === "queue";
+    queuePanel.classList.remove(
+      ...(open ? QUEUE_CLOSED_CLASSES : QUEUE_OPEN_CLASSES),
+    );
+    queuePanel.classList.add(
+      ...(open ? QUEUE_OPEN_CLASSES : QUEUE_CLOSED_CLASSES),
+    );
+  });
+
+  subscribeAudio((state) => {
+    trackRows.forEach((row, index) => {
+      const isActive = index === state.i;
+      const isMissing = Boolean(state.missing[index]);
+      row.classList.toggle("bg-cream/10", isActive);
+      row.classList.toggle("bg-transparent", !isActive);
+
+      const titleEl = row.querySelector<HTMLElement>("[data-track-title]")!;
+      titleEl.classList.toggle("text-white", isActive && !isMissing);
+      titleEl.classList.toggle("text-cream/95", !isActive && !isMissing);
+      titleEl.classList.toggle("text-cream/60", isMissing);
+
+      const tagEl = row.querySelector<HTMLElement>("[data-track-tag]")!;
+      tagEl.textContent = isMissing
+        ? "missing"
+        : isActive && state.started
+          ? state.playing
+            ? "playing"
+            : "paused"
+          : "";
+    });
+  });
+
+  queueCloseBtn.addEventListener("click", closePanel);
+  trackRows.forEach((row, index) => {
+    row.addEventListener("click", () => playTrack(index));
+  });
+</script>

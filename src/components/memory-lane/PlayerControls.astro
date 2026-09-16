@@ -1,0 +1,250 @@
+---
+import SkipBackFill from "phosphor-astro/SkipBackFill.astro";
+import PauseFill from "phosphor-astro/PauseFill.astro";
+import PlayFill from "phosphor-astro/PlayFill.astro";
+import SkipForwardFill from "phosphor-astro/SkipForwardFill.astro";
+import QueueFill from "phosphor-astro/QueueFill.astro";
+import SpeakerSimpleHighFill from "phosphor-astro/SpeakerSimpleHighFill.astro";
+import SpeakerSimpleLowFill from "phosphor-astro/SpeakerSimpleLowFill.astro";
+import SpeakerSimpleSlashFill from "phosphor-astro/SpeakerSimpleSlashFill.astro";
+import { TRACKS } from "../../data/tracks";
+
+const initialTrack = TRACKS[0];
+---
+
+<div
+  class="flex flex-wrap items-center justify-center gap-[clamp(12px,2.4vw,18px)] rounded-[20px] border border-cream/[0.14] bg-panel/70 px-[clamp(13px,2.8vw,18px)] py-[clamp(12px,2.4vw,14px)] shadow-[0_34px_90px_rgba(4,7,13,0.6),0_6px_18px_rgba(4,7,13,0.35)] backdrop-blur-[22px] backdrop-saturate-[1.1]"
+>
+  <div
+    class="flex h-[clamp(46px,11vw,56px)] w-[clamp(46px,11vw,56px)] flex-none items-center justify-center rounded-[14px] bg-cream/10 shadow-[inset_0_0_0_1px_rgba(244,233,220,0.16)]"
+  >
+  </div>
+
+  <div class="flex min-w-30 flex-1 flex-col gap-2">
+    <div class="flex min-w-0 items-baseline gap-2.5">
+      <div
+        id="ml-now-title"
+        class="truncate text-[15px] font-medium tracking-[-0.01em]"
+      >{initialTrack.title}</div>
+    </div>
+    <div
+      id="ml-seek"
+      class="relative flex h-4.5 cursor-pointer items-center px-1.5"
+    >
+      <div class="relative h-1 w-full rounded bg-cream/16">
+        <div
+          id="ml-progress-fill"
+          class="absolute top-0 bottom-0 left-0 w-0 rounded bg-cream/88"
+        >
+        </div>
+      </div>
+      <div class="pointer-events-none absolute top-0.75 right-1.5 left-1.5 h-3">
+        <div
+          id="ml-progress-thumb"
+          class="absolute top-0 left-0 -ml-1.5 h-3 w-3 rounded-full bg-cream shadow-[0_1px_5px_rgba(6,9,15,0.5)]"
+        >
+        </div>
+      </div>
+    </div>
+    <div
+      class="flex items-center justify-between font-mono text-[11px] tracking-widest text-cream/82"
+    >
+      <span id="ml-time-now">0:00</span>
+      <span id="ml-time-total">0:00</span>
+    </div>
+  </div>
+
+  <div
+    class="flex flex-1 basis-full items-center justify-center gap-1.5 sm:basis-auto sm:flex-none"
+  >
+    <button
+      id="ml-prev"
+      type="button"
+      aria-label="Previous song"
+      class="flex h-10 w-10 items-center justify-center rounded-full border-0 bg-cream/7 transition-colors duration-200 hover:bg-cream/20"
+    >
+      <SkipBackFill class="h-4.75 w-4.75 text-cream/92" aria-hidden="true" />
+    </button>
+    <button
+      id="ml-toggle"
+      type="button"
+      aria-label="Play or pause"
+      class="flex h-12.5 w-12.5 items-center justify-center rounded-full border-0 bg-cream shadow-[0_10px_28px_rgba(6,9,15,0.45)] transition-colors duration-200 hover:bg-white"
+    >
+      <PauseFill id="ml-icon-pause" class="hidden h-5 w-5 text-coal" aria-hidden="true" />
+      <PlayFill id="ml-icon-play" class="h-5 w-5 text-coal" aria-hidden="true" />
+    </button>
+    <button
+      id="ml-next"
+      type="button"
+      aria-label="Next song"
+      class="flex h-10 w-10 items-center justify-center rounded-full border-0 bg-cream/7 transition-colors duration-200 hover:bg-cream/20"
+    >
+      <SkipForwardFill class="h-4.75 w-4.75 text-cream/92" aria-hidden="true" />
+    </button>
+
+    <div class="mx-1 h-6 w-px bg-cream/14"></div>
+
+    <button
+      id="ml-open-queue"
+      type="button"
+      aria-label="Show playlist"
+      title="Playlist"
+      class="flex h-10 w-10 items-center justify-center rounded-full border-0 bg-cream/7 transition-colors duration-200 hover:bg-cream/22"
+    >
+      <QueueFill class="h-4.75 w-4.75 text-cream/92" aria-hidden="true" />
+    </button>
+
+    <div class="mx-1 h-6 w-px bg-cream/14"></div>
+
+    <button
+      id="ml-mute"
+      type="button"
+      aria-label="Mute"
+      class="flex h-8 w-8 items-center justify-center rounded-full border-0 bg-none opacity-80 transition-opacity duration-200 hover:opacity-100"
+    >
+      <span id="ml-vol-icon" class="relative flex h-5 w-5 items-center justify-center text-cream/92">
+        <SpeakerSimpleHighFill id="ml-vol-icon-high" class="absolute h-5 w-5" aria-hidden="true" />
+        <SpeakerSimpleLowFill id="ml-vol-icon-low" class="absolute hidden h-5 w-5" aria-hidden="true" />
+        <SpeakerSimpleSlashFill id="ml-vol-icon-slash" class="absolute hidden h-5 w-5" aria-hidden="true" />
+      </span>
+    </button>
+    <div
+      id="ml-volume"
+      class="relative flex h-5.5 w-14 cursor-pointer touch-none items-center px-1.25 sm:w-18.5"
+    >
+      <div class="relative h-1 w-full rounded bg-cream/22">
+        <div
+          id="ml-vol-fill"
+          class="absolute top-0 bottom-0 left-0 w-[70%] rounded bg-cream/90"
+        >
+        </div>
+      </div>
+      <div
+        class="pointer-events-none absolute top-1.25 right-1.25 left-1.25 h-3"
+      >
+        <div
+          id="ml-vol-thumb"
+          class="absolute top-0 left-[70%] -ml-1.5 h-3 w-3 rounded-full bg-cream shadow-[0_1px_4px_rgba(6,9,15,0.45)]"
+        >
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  import {
+    subscribeAudio,
+    currentTrack,
+    goToTrack,
+    togglePlayback,
+    seekToFraction,
+    setVolume,
+    toggleMute,
+  } from "../../scripts/stores/audio-store";
+  import { subscribePanel, togglePanel } from "../../scripts/stores/panel-store";
+
+  const QUEUE_BTN_ACTIVE_CLASS = "bg-cream/24";
+  const QUEUE_BTN_DEFAULT_CLASS = "bg-cream/7";
+
+  function formatTime(seconds: number): string {
+    if (!isFinite(seconds) || seconds <= 0) return "0:00";
+    const m = Math.floor(seconds / 60);
+    const s = Math.floor(seconds % 60);
+    return `${m}:${s < 10 ? "0" + s : s}`;
+  }
+
+  const el = <T extends HTMLElement>(id: string) =>
+    document.getElementById(id) as T;
+
+  const nowTitleEl = el<HTMLElement>("ml-now-title");
+  const iconPauseEl = el<HTMLElement>("ml-icon-pause");
+  const iconPlayEl = el<HTMLElement>("ml-icon-play");
+
+  const seekEl = el<HTMLElement>("ml-seek");
+  const progressFillEl = el<HTMLElement>("ml-progress-fill");
+  const progressThumbEl = el<HTMLElement>("ml-progress-thumb");
+  const timeNowEl = el<HTMLElement>("ml-time-now");
+  const timeTotalEl = el<HTMLElement>("ml-time-total");
+
+  const prevBtn = el<HTMLButtonElement>("ml-prev");
+  const toggleBtn = el<HTMLButtonElement>("ml-toggle");
+  const nextBtn = el<HTMLButtonElement>("ml-next");
+
+  const openQueueBtn = el<HTMLButtonElement>("ml-open-queue");
+  const muteBtn = el<HTMLButtonElement>("ml-mute");
+  const volIconHighEl = el<HTMLElement>("ml-vol-icon-high");
+  const volIconLowEl = el<HTMLElement>("ml-vol-icon-low");
+  const volIconSlashEl = el<HTMLElement>("ml-vol-icon-slash");
+  const volumeEl = el<HTMLElement>("ml-volume");
+  const volFillEl = el<HTMLElement>("ml-vol-fill");
+  const volThumbEl = el<HTMLElement>("ml-vol-thumb");
+
+  subscribeAudio((state) => {
+    const track = currentTrack();
+    nowTitleEl.textContent = track ? track.title : "";
+
+    iconPauseEl.classList.toggle("hidden", !state.playing);
+    iconPlayEl.classList.toggle("hidden", state.playing);
+
+    timeNowEl.textContent = formatTime(state.time);
+    timeTotalEl.textContent = formatTime(state.dur);
+    const pct = state.dur ? (state.time / state.dur) * 100 : 0;
+    progressFillEl.style.width = `${pct}%`;
+    progressThumbEl.style.left = `${pct}%`;
+
+    const volPct = (state.muted ? 0 : state.vol) * 100;
+    volFillEl.style.width = `${volPct}%`;
+    volThumbEl.style.left = `${volPct}%`;
+    const isMuted = state.muted || state.vol <= 0.01;
+    const isLow = !isMuted && state.vol < 0.5;
+    const isHigh = !isMuted && !isLow;
+    volIconHighEl.classList.toggle("hidden", !isHigh);
+    volIconLowEl.classList.toggle("hidden", !isLow);
+    volIconSlashEl.classList.toggle("hidden", !isMuted);
+  });
+
+  subscribePanel((panel) => {
+    const queueOpen = panel === "queue";
+    openQueueBtn.classList.toggle(QUEUE_BTN_ACTIVE_CLASS, queueOpen);
+    openQueueBtn.classList.toggle(QUEUE_BTN_DEFAULT_CLASS, !queueOpen);
+  });
+
+  prevBtn.addEventListener("click", () => goToTrack(-1));
+  nextBtn.addEventListener("click", () => goToTrack(1));
+  toggleBtn.addEventListener("click", togglePlayback);
+  muteBtn.addEventListener("click", toggleMute);
+  openQueueBtn.addEventListener("click", () => togglePanel("queue"));
+
+  seekEl.addEventListener("click", (event) => {
+    const rect = seekEl.getBoundingClientRect();
+    const x = event.clientX - (rect.left + 6);
+    const width = rect.width - 12;
+    seekToFraction(x / width);
+  });
+
+  function setVolumeFromClientX(clientX: number) {
+    const rect = volumeEl.getBoundingClientRect();
+    setVolume((clientX - (rect.left + 5)) / (rect.width - 10));
+  }
+
+  let draggingVolume = false;
+
+  volumeEl.addEventListener("pointerdown", (event) => {
+    draggingVolume = true;
+    volumeEl.setPointerCapture(event.pointerId);
+    setVolumeFromClientX(event.clientX);
+  });
+  volumeEl.addEventListener("pointermove", (event) => {
+    if (!draggingVolume) return;
+    setVolumeFromClientX(event.clientX);
+  });
+  function endVolumeDrag(event: PointerEvent) {
+    if (!draggingVolume) return;
+    draggingVolume = false;
+    volumeEl.releasePointerCapture(event.pointerId);
+  }
+  volumeEl.addEventListener("pointerup", endVolumeDrag);
+  volumeEl.addEventListener("pointercancel", endVolumeDrag);
+</script>

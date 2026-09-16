@@ -1,0 +1,93 @@
+---
+import WorldBackdrop from "./WorldBackdrop.astro";
+import SiteHeader from "./SiteHeader.astro";
+import PlaylistPanel from "./PlaylistPanel.astro";
+import PlayerControls from "./PlayerControls.astro";
+import ListenerBar from "./ListenerBar.astro";
+import AboutDrawer from "./AboutDrawer.astro";
+import { WORLDS } from "../../data/worlds";
+
+const initialWorld = WORLDS[0];
+---
+
+<div class="fixed inset-0 overflow-hidden bg-ink font-sans text-cream">
+  <WorldBackdrop />
+  <SiteHeader />
+
+  <main
+    id="ml-main"
+    class="pointer-events-none absolute inset-0 z-5 flex flex-col items-center justify-end gap-[clamp(12px,2vh,18px)] overflow-hidden px-[clamp(14px,3.2vw,30px)] pt-[clamp(92px,16vh,130px)] pb-[clamp(18px,4vh,40px)]"
+  >
+    <div
+      id="ml-world-info"
+      class="flex flex-col items-center gap-1.5 text-center transition-opacity duration-550 ease-out"
+    >
+      <span
+        id="ml-world-coords"
+        class="font-mono text-[11px] leading-normal tracking-[0.22em] text-mist/98 [text-shadow:0_1px_3px_rgba(6,9,15,0.8)]"
+      >{initialWorld.coords}</span>
+      <h1
+        id="ml-world-name"
+        class="m-0 pb-[0.04em] text-[clamp(28px,3.2vw,40px)] leading-[1.05] font-medium tracking-[-0.035em] text-white [text-shadow:0_1px_3px_rgba(6,9,15,0.6)]"
+      >{initialWorld.name}</h1>
+    </div>
+
+    <div class="pointer-events-auto relative w-full max-w-155">
+      <PlaylistPanel />
+      <PlayerControls />
+    </div>
+
+    <ListenerBar />
+  </main>
+
+  <div
+    id="ml-scrim"
+    class="absolute inset-0 z-8 hidden bg-[rgba(5,8,14,0.55)] backdrop-blur-[3px]"
+  >
+  </div>
+
+  <AboutDrawer />
+</div>
+
+<script>
+  import { subscribeWorld, currentWorld } from "../../scripts/stores/world-store";
+  import { subscribePanel, closePanel } from "../../scripts/stores/panel-store";
+  import { togglePlayback, goToTrack } from "../../scripts/stores/audio-store";
+
+  const worldInfoEl = document.getElementById("ml-world-info") as HTMLElement;
+  const worldCoordsEl = document.getElementById(
+    "ml-world-coords",
+  ) as HTMLElement;
+  const worldNameEl = document.getElementById("ml-world-name") as HTMLElement;
+  const mainEl = document.getElementById("ml-main") as HTMLElement;
+  const scrimEl = document.getElementById("ml-scrim") as HTMLElement;
+
+  subscribeWorld((state) => {
+    worldInfoEl.classList.toggle("opacity-0", state.jumping);
+    worldInfoEl.classList.toggle("opacity-100", !state.jumping);
+    if (!state.jumping) {
+      const world = currentWorld();
+      worldCoordsEl.textContent = world.coords;
+      worldNameEl.textContent = world.name;
+    }
+  });
+
+  subscribePanel((panel) => {
+    scrimEl.classList.toggle("hidden", panel !== "about");
+    mainEl.style.zIndex = panel === "queue" ? "12" : "5";
+  });
+
+  scrimEl.addEventListener("click", closePanel);
+
+  window.addEventListener("keydown", (event) => {
+    const target = event.target as HTMLElement;
+    if (target && /INPUT|TEXTAREA/.test(target.tagName)) return;
+    if (event.code === "Space") {
+      event.preventDefault();
+      togglePlayback();
+    }
+    if (event.code === "ArrowRight") goToTrack(1);
+    if (event.code === "ArrowLeft") goToTrack(-1);
+    if (event.code === "Escape") closePanel();
+  });
+</script>

@@ -1,0 +1,96 @@
+---
+import { WORLDS } from "../../data/worlds";
+
+const initialWorld = WORLDS[0];
+---
+
+<aside
+  id="ml-about-panel"
+  class="absolute inset-y-0 right-0 z-9 flex w-full max-w-105 translate-x-full flex-col border-l border-cream/12 bg-drawer/90 backdrop-blur-[26px] transition-transform duration-500 ease-[cubic-bezier(0.22,0.61,0.36,1)]"
+>
+  <div
+    class="flex items-center justify-between border-b border-cream/10 px-6 py-5.5"
+  >
+    <div
+      class="font-mono text-[11px] leading-normal tracking-[0.22em] text-cream/60 uppercase"
+    >
+      The story
+    </div>
+    <button
+      id="ml-about-close"
+      type="button"
+      aria-label="Close story panel"
+      class="h-7.5 w-7.5 rounded-full border border-cream/18 bg-transparent text-[13px] leading-none text-cream/70 transition-colors duration-200 hover:border-cream/45 hover:text-white"
+    >
+      ✕
+    </button>
+  </div>
+
+  <div class="min-h-0 flex-1 overflow-y-auto px-3 pt-2 pb-7">
+    <div class="flex flex-col gap-5 px-3 py-3.5">
+      <p
+        class="m-0 text-[19px] leading-normal tracking-[-0.015em] text-cream/92 text-pretty"
+      >
+        This is the playlist of a warrior who keeps travelling to new worlds,
+        looking for his own.
+      </p>
+      <p class="m-0 text-sm leading-[1.75] text-cream/66 text-pretty">
+        He does not remember leaving. Only that the sky was a different colour,
+        and someone was waiting for him. So he keeps jumping, landing somewhere
+        new, sitting on the nearest edge and staying until the feeling passes.
+      </p>
+      <p class="m-0 text-sm leading-[1.75] text-cream/66 text-pretty">
+        Every world is almost right. The light looks familiar, the roads run the
+        way they should, but the moons are always wrong. What he feels is not
+        really sadness. It is the way a dream slips away the moment you wake up.
+      </p>
+      <p class="m-0 text-sm leading-[1.75] text-cream/66 text-pretty">
+        These are the songs he keeps on while he waits for the next jump. Slow,
+        warm and dream like. Music for looking at a sky that is not yours.
+      </p>
+
+      <div class="h-px bg-cream/12"></div>
+
+      <div
+        class="flex flex-col gap-2.5 font-mono text-[10px] leading-normal tracking-[0.14em] text-cream/42 uppercase"
+      >
+        <div class="flex justify-between gap-3">
+          <span>Current world</span>
+          <span id="ml-about-world-name" class="text-cream/75">{initialWorld.name}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<script>
+  import { subscribePanel, closePanel } from "../../scripts/stores/panel-store";
+  import { subscribeWorld, currentWorld } from "../../scripts/stores/world-store";
+
+  const ABOUT_OPEN_CLASSES = ["translate-x-0"];
+  const ABOUT_CLOSED_CLASSES = ["translate-x-full"];
+
+  const aboutPanel = document.getElementById("ml-about-panel") as HTMLElement;
+  const aboutCloseBtn = document.getElementById(
+    "ml-about-close",
+  ) as HTMLButtonElement;
+  const aboutWorldNameEl = document.getElementById(
+    "ml-about-world-name",
+  ) as HTMLElement;
+
+  subscribePanel((panel) => {
+    const open = panel === "about";
+    aboutPanel.classList.remove(
+      ...(open ? ABOUT_CLOSED_CLASSES : ABOUT_OPEN_CLASSES),
+    );
+    aboutPanel.classList.add(
+      ...(open ? ABOUT_OPEN_CLASSES : ABOUT_CLOSED_CLASSES),
+    );
+  });
+
+  subscribeWorld(() => {
+    aboutWorldNameEl.textContent = currentWorld().name;
+  });
+
+  aboutCloseBtn.addEventListener("click", closePanel);
+</script>

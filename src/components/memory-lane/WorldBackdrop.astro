@@ -1,0 +1,43 @@
+---
+import { WORLDS } from "../../data/worlds";
+---
+
+<div
+  class="absolute inset-0 bg-ink"
+  role="img"
+  aria-label="A lone armored warrior looking out over a city at dusk on a world that is not his"
+>
+  {
+    WORLDS.map((world, index) => (
+      <div
+        data-world-layer={index}
+        class:list={[
+          "absolute inset-0 bg-cover bg-center transition-opacity duration-550 ease-out",
+          index === 0 ? "opacity-100" : "opacity-0",
+        ]}
+        style={{ backgroundImage: `url(${world.image.src})` }}
+      />
+    ))
+  }
+</div>
+
+<div
+  class="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(7,10,18,0.32)_0%,rgba(7,10,18,0)_20%,rgba(7,10,18,0)_62%,rgba(6,9,15,0.3)_100%)]"
+>
+</div>
+
+<script>
+  import { subscribeWorld } from "../../scripts/stores/world-store";
+
+  const layers = Array.from(
+    document.querySelectorAll<HTMLElement>("[data-world-layer]"),
+  );
+
+  subscribeWorld((state) => {
+    layers.forEach((layer, index) => {
+      const active = index === state.index;
+      layer.classList.toggle("opacity-100", active);
+      layer.classList.toggle("opacity-0", !active);
+    });
+  });
+</script>
