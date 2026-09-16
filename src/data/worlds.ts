@@ -1,6 +1,6 @@
 import type { ImageMetadata } from "astro";
-import calix from "../assets/images/calix-7.avif";
-import solaris from "../assets/images/solaris.avif";
+import vsa217b from "../assets/images/vsa-217b.avif";
+import vsa3011d from "../assets/images/vsa-3011d.avif";
 
 export interface World {
   name: string;
@@ -9,6 +9,6 @@ export interface World {
 }
 
 export const WORLDS: World[] = [
-  { name: "Calix 7", coords: "31.62°N  74.88°E", image: calix },
-  { name: "Solaris Epidermus", coords: "19.07°N  72.87°E", image: solaris },
+  { name: "VSA-217B", coords: "31.62°N  74.88°E", image: vsa217b },
+  { name: "VSA-3011D", coords: "19.07°N  72.87°E", image: vsa3011d },
 ];
