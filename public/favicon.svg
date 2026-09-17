@@ -1,22 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
-    <mask id="cassette-cutout" maskUnits="userSpaceOnUse">
-        <rect x="0" y="0" width="128" height="128" fill="black" />
-        <rect x="10" y="26" width="108" height="76" rx="14" fill="white" />
-        <circle cx="42" cy="82" r="15" fill="black" />
-        <circle cx="86" cy="82" r="15" fill="black" />
-    </mask>
-    <rect
-        class="fg"
-        x="0"
-        y="0"
-        width="128"
-        height="128"
-        mask="url(#cassette-cutout)"
-    />
-    <style>
-        .fg { fill: #000; }
-        @media (prefers-color-scheme: dark) {
-            .fg { fill: #FFF; }
-        }
-    </style>
+<svg width="256" height="256" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="128" cy="128" r="128" fill="#f4e9dc"/>
+  <g transform="translate(76.8 76.8) scale(0.4)">
+    <path fill="#14100c" d="M240,128a15.74,15.74,0,0,1-7.6,13.51L88.32,229.65a16,16,0,0,1-16.2.3A15.86,15.86,0,0,1,64,216.13V39.87a15.86,15.86,0,0,1,8.12-13.82,16,16,0,0,1,16.2.3L232.4,114.49A15.74,15.74,0,0,1,240,128Z"/>
+  </g>
 </svg>
