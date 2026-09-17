@@ -25,11 +25,14 @@ const initialWorld = WORLDS[0];
       <span
         id="ml-world-coords"
         class="font-mono text-[11px] leading-normal tracking-[0.22em] text-mist/98 [text-shadow:0_1px_3px_rgba(6,9,15,0.8)]"
-      >{initialWorld.coords}</span>
+        >{initialWorld.coords}</span
+      >
       <h1
         id="ml-world-name"
         class="m-0 pb-[0.04em] text-[clamp(28px,3.2vw,40px)] leading-[1.05] font-medium tracking-[-0.035em] text-white [text-shadow:0_1px_3px_rgba(6,9,15,0.6)]"
-      >{initialWorld.name}</h1>
+      >
+        {initialWorld.name}
+      </h1>
     </div>
 
     <div class="pointer-events-auto relative w-full max-w-155">
@@ -50,7 +53,10 @@ const initialWorld = WORLDS[0];
 </div>
 
 <script>
-  import { subscribeWorld, currentWorld } from "../../scripts/stores/world-store";
+  import {
+    subscribeWorld,
+    currentWorld,
+  } from "../../scripts/stores/world-store";
   import { subscribePanel, closePanel } from "../../scripts/stores/panel-store";
   import { togglePlayback, goToTrack } from "../../scripts/stores/audio-store";
 
