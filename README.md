@@ -16,11 +16,11 @@ These are the songs he keeps on while he waits for the next jump. Slow, warm and
 
 ## 🎧 Why the music matters
 
-The whole project only works because of the playlist. Every track in [`src/data/tracks.ts`](src/data/tracks.ts) was picked for the same reason: it's slow, soft, a little melancholic, and never in a hurry to go anywhere. That's not a coincidence — it's the point.
+The whole project only works because of the playlist. Every track in [`src/data/tracks.ts`](src/data/tracks.ts) was picked for the same reason: it's slow, soft, a little melancholic, and never in a hurry to go anywhere. That's not a coincidence, it's the point.
 
-The character in the story isn't running from anything, and he isn't panicking about being lost. He's just... waiting, somewhere strange, calmly. Lo-fi and ambient tracks like these create exactly that headspace — unresolved but peaceful, homesick but not desperate. The music *is* the emotional explanation for the story, not just a soundtrack playing over it. Without it, "a man jumping between alien worlds looking for home" could read as a sci-fi premise. With it, it reads as a feeling.
+The character in the story isn't running from anything, and he isn't panicking about being lost. He's just waiting, somewhere strange, calmly. Lo-fi and ambient tracks like these create exactly that headspace, unresolved but peaceful, homesick but not desperate. The music is the emotional explanation for the story, not just a soundtrack playing over it. Without it, "a man jumping between alien worlds looking for home" could read as a sci-fi premise. With it, it reads as a feeling.
 
-Each world (currently **Solmaris Prime** and **Solmaris Minor**, see [`src/data/worlds.ts`](src/data/worlds.ts)) swaps the backdrop while the playlist keeps playing underneath — the scenery changes, the calm doesn't.
+Each world (currently **Solaris Prime** and **Solaris Minor**, see [`src/data/worlds.ts`](src/data/worlds.ts)) swaps the backdrop while the playlist keeps playing underneath — the scenery changes, the calm doesn't.
 
 ## 🛠️ What it's built with
 
