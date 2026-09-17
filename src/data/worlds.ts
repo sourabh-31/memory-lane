@@ -1,7 +1,7 @@
 import type { ImageMetadata } from "astro";
 
-import solmarisPrime from "../assets/images/solmaris-prime.avif";
-import solmarisMinor from "../assets/images/solmaris-minor.avif";
+import solarisPrime from "../assets/images/solaris-prime.avif";
+import solarisMinor from "../assets/images/solaris-minor.avif";
 
 export interface World {
   name: string;
@@ -10,6 +10,6 @@ export interface World {
 }
 
 export const WORLDS: World[] = [
-  { name: "Solmaris Prime", coords: "31.62°N  74.88°E", image: solmarisPrime },
-  { name: "Solmaris Minor", coords: "19.07°N  72.87°E", image: solmarisMinor },
+  { name: "Solaris Prime", coords: "31.62°N  74.88°E", image: solarisPrime },
+  { name: "Solaris Minor", coords: "19.07°N  72.87°E", image: solarisMinor },
 ];
