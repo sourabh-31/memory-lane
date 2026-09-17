@@ -1,10 +1,10 @@
-# 🌙 Memory Lane
+# Memory Lane
 
 **Memory Lane** is a small, imagined world built for one specific feeling: the quiet, floating calm of sitting somewhere unfamiliar with a good song on, waiting for something you can't quite name.
 
 There's no login, no save state, no real "app" underneath it. It's a mood, dressed up as a music player.
 
-## 🪐 The story
+## The story
 
 This is the playlist of an outsider who keeps travelling to new worlds, looking for his own.
 
