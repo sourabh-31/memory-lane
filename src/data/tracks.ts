@@ -76,7 +76,7 @@ export const TRACKS: Track[] = [
   { title: "you not the same", artist: "tilekid", videoId: "i77S8l-7-3Y" },
   {
     title: "stellar",
-    artist: ".diedlonely, énouement",
+    artist: "diedlonely, énouement",
     videoId: "R1vx49mTtD0",
   },
   {
