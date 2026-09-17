@@ -55,3 +55,11 @@ Requires Node `>=22.12.0`.
 - **New world:** drop an image into `src/assets/images`, then add it to `WORLDS` in [`src/data/worlds.ts`](src/data/worlds.ts) with a name and coordinates.
 
 If it doesn't feel calm, it probably doesn't belong here.
+
+## ☕ Support
+
+If you find Dropsei useful, consider [buying me a coffee](https://www.buymeacoffee.com/sourabh0003).
+
+## 📄 License
+
+This project is licensed under the [MIT License](LICENSE).
