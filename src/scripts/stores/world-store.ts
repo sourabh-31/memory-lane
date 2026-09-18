@@ -1,4 +1,5 @@
 import { WORLDS } from "../../data/worlds";
+import { ensurePlaying } from "./audio-store";
 
 // Must match the fade duration used by the world text (MemoryLaneApp.astro)
 // and background layers (WorldBackdrop.astro) so both transition in sync.
@@ -30,6 +31,7 @@ export function jumpWorld() {
   if (state.jumping) return;
   state.jumping = true;
   notify();
+  ensurePlaying();
 
   setTimeout(() => {
     state.index = (state.index + 1) % WORLDS.length;

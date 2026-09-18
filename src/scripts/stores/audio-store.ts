@@ -233,6 +233,11 @@ export function goToTrack(direction: 1 | -1) {
   load((state.i + direction + count) % count, true);
 }
 
+export function ensurePlaying() {
+  if (state.playing) return;
+  togglePlayback();
+}
+
 export function togglePlayback() {
   if (!playerReady || !player || !hasLoadedTrack) {
     load(state.i, true);
