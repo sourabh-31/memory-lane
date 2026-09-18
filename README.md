@@ -20,7 +20,7 @@ The whole project only works because of the playlist. Every track in [`src/data/
 
 The character in the story isn't running from anything, and he isn't panicking about being lost. He's just waiting, somewhere strange, calmly. Lo-fi and ambient tracks like these create exactly that headspace, unresolved but peaceful, homesick but not desperate. The music is the emotional explanation for the story, not just a soundtrack playing over it. Without it, "a man jumping between alien worlds looking for home" could read as a sci-fi premise. With it, it reads as a feeling.
 
-Each world (currently **Solaris Prime** and **Solaris Minor**, see [`src/data/worlds.ts`](src/data/worlds.ts)) swaps the backdrop while the playlist keeps playing underneath — the scenery changes, the calm doesn't.
+Each world (currently **Solaris Prime** and **Solaris Minor**, see [`src/data/worlds.ts`](src/data/worlds.ts)) swaps the backdrop while the playlist keeps playing underneath: the scenery changes, the calm doesn't.
 
 ## 🛠️ What it's built with
 
@@ -29,7 +29,7 @@ Memory Lane is a small [Astro](https://astro.build) site, styled with Tailwind C
 - **Astro** for the pages/components (`.astro` files in [`src/components/memory-lane`](src/components/memory-lane))
 - **Tailwind CSS v4** for styling
 - **Cloudflare adapter** ([`@astrojs/cloudflare`](astro.config.mjs)) for deployment via Wrangler
-- Small client-side stores (`src/scripts/stores`) for the player, the active world, and panel state — no framework, just tiny vanilla modules
+- Small client-side stores (`src/scripts/stores`) for the player, the active world, and panel state, no framework, just tiny vanilla modules
 - Tracks are embedded via YouTube video IDs; there's no audio hosting of its own
 
 ## 🚀 Running it locally
@@ -51,7 +51,7 @@ Requires Node `>=22.12.0`.
 
 ## ✨ Adding to the world
 
-- **New track:** add an entry to `TRACKS` in [`src/data/tracks.ts`](src/data/tracks.ts) — just a title, artist, and YouTube video ID.
+- **New track:** add an entry to `TRACKS` in [`src/data/tracks.ts`](src/data/tracks.ts): just a title, artist, and YouTube video ID.
 - **New world:** drop an image into `src/assets/images`, then add it to `WORLDS` in [`src/data/worlds.ts`](src/data/worlds.ts) with a name and coordinates.
 
 If it doesn't feel calm, it probably doesn't belong here.

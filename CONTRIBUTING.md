@@ -22,9 +22,9 @@ Every world has the same figure in it: an armored knight, seated or standing, wa
 
 Nothing about the setting should read as "a place on Earth." Every element is a chance to make it alien:
 
-- **Sky / atmosphere** — different color, density, cloud behavior, or lighting than a normal Earth sky.
-- **Moons** — the existing worlds all lean on a wrong-looking moon (or several) as a signature detail. Consider what's up there instead of one familiar moon.
-- **Architecture / environment** — buildings, terrain, vegetation, and structures should feel like they belong to a different civilization or a different planet's physics, not Earth cities or Earth nature with a color filter on top.
+- **Sky / atmosphere**: different color, density, cloud behavior, or lighting than a normal Earth sky.
+- **Moons**: the existing worlds all lean on a wrong-looking moon (or several) as a signature detail. Consider what's up there instead of one familiar moon.
+- **Architecture / environment**: buildings, terrain, vegetation, and structures should feel like they belong to a different civilization or a different planet's physics, not Earth cities or Earth nature with a color filter on top.
 
 The goal is "almost right, but the moons are always wrong," per the [README](README.md), not generic fantasy or generic sci-fi.
 
