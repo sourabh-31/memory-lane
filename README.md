@@ -56,9 +56,13 @@ Requires Node `>=22.12.0`.
 
 If it doesn't feel calm, it probably doesn't belong here.
 
+## 🤝 Contributing
+
+Right now, world images are the only thing open to contributions (tracks aren't, yet). There are specific requirements for what makes a world fit, see [CONTRIBUTING.md](CONTRIBUTING.md) to learn more before submitting one.
+
 ## ☕ Support
 
-If you find Dropsei useful, consider [buying me a coffee](https://www.buymeacoffee.com/sourabh0003).
+If you find Memory Lane useful, consider [buying me a coffee](https://www.buymeacoffee.com/sourabh0003).
 
 ## 📄 License
 
