@@ -48,7 +48,7 @@ import HeartFill from "phosphor-astro/HeartFill.astro";
 </header>
 
 <script>
-  import { jumpWorld } from "../../scripts/stores/world-store";
+  import { jumpWorld, startAutoJump } from "../../scripts/stores/world-store";
   import { togglePanel } from "../../scripts/stores/panel-store";
 
   const CLOCK_INTERVAL_MS = 20000;
@@ -76,5 +76,6 @@ import HeartFill from "phosphor-astro/HeartFill.astro";
   window.addEventListener("beforeunload", () => clearInterval(clockTimer));
 
   jumpBtn.addEventListener("click", jumpWorld);
+  startAutoJump();
   aboutBtn.addEventListener("click", () => togglePanel("about"));
 </script>
