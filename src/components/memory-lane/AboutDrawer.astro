@@ -51,14 +51,59 @@ const initialWorld = WORLDS[0];
 
       <div class="h-px bg-cream/12"></div>
 
-      <div
-        class="flex flex-col gap-2.5 font-mono text-[10px] leading-normal tracking-[0.14em] text-cream/42 uppercase"
-      >
-        <div class="flex justify-between gap-3">
-          <span>Current world</span>
-          <span id="ml-about-world-name" class="text-cream/75"
-            >{initialWorld.name}</span
-          >
+      <div class="flex flex-col gap-3.5">
+        <div
+          class="flex items-baseline justify-between gap-3 font-mono text-[10px] leading-normal tracking-[0.14em] text-cream/42 uppercase"
+        >
+          <span>Worlds · {String(WORLDS.length).padStart(2, "0")}</span>
+          <span>
+            Now on {" "}
+            <span id="ml-about-world-name" class="text-cream/75"
+              >{initialWorld.name}</span
+            >
+          </span>
+        </div>
+
+        <div class="flex flex-col gap-3">
+          {
+            WORLDS.map((world, index) => (
+              <button
+                type="button"
+                data-world-card={index}
+                aria-label={`Jump to ${world.name}`}
+                aria-pressed={index === 0 ? "true" : "false"}
+                class="group relative aspect-video w-full cursor-pointer overflow-hidden rounded-[14px] border-0 bg-cream/6 p-0 text-left outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cream/70 aria-pressed:cursor-default"
+              >
+                <img
+                  src={world.image.src}
+                  alt=""
+                  aria-hidden="true"
+                  loading="lazy"
+                  decoding="async"
+                  class="absolute inset-0 h-full w-full object-cover opacity-70 transition-opacity duration-500 ease-out group-hover:opacity-95 group-aria-pressed:opacity-100"
+                />
+                <span class="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(6,9,15,0.25)_0%,rgba(6,9,15,0)_30%,rgba(6,9,15,0)_55%,rgba(6,9,15,0.8)_100%)]" />
+                <span class="pointer-events-none absolute inset-0 rounded-[14px] shadow-[inset_0_0_0_1px_rgba(244,233,220,0.12)] group-aria-pressed:shadow-[inset_0_0_0_1.5px_rgba(244,233,220,0.75)]" />
+
+                <span class="absolute top-2.5 left-2.5 font-mono text-[9.5px] leading-none tracking-[0.14em] text-cream/70">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <span class="absolute top-2 right-2 hidden items-center gap-1.5 rounded-full bg-ink/55 px-2 py-1 font-mono text-[8.5px] leading-none tracking-[0.16em] text-cream/90 uppercase backdrop-blur-md group-aria-pressed:flex">
+                  <span class="h-1.25 w-1.25 rounded-full bg-mint shadow-[0_0_6px_rgba(159,224,168,0.9)]" />
+                  Here
+                </span>
+
+                <span class="absolute inset-x-0 bottom-0 flex flex-col gap-1 px-3.5 pt-6 pb-3">
+                  <span class="text-[16px] leading-tight font-medium tracking-[-0.01em] text-white">
+                    {world.name}
+                  </span>
+                  <span class="font-mono text-[10px] leading-normal tracking-[0.06em] whitespace-nowrap text-cream/65">
+                    {world.coords.replace(/\s+/g, " ")}
+                  </span>
+                </span>
+              </button>
+            ))
+          }
         </div>
       </div>
     </div>
@@ -70,6 +115,7 @@ const initialWorld = WORLDS[0];
   import {
     subscribeWorld,
     currentWorld,
+    jumpToWorld,
   } from "../../scripts/stores/world-store";
 
   const ABOUT_OPEN_CLASSES = ["translate-x-0"];
@@ -93,9 +139,20 @@ const initialWorld = WORLDS[0];
     );
   });
 
-  subscribeWorld(() => {
+  const worldCards = Array.from(
+    document.querySelectorAll<HTMLButtonElement>("[data-world-card]"),
+  );
+
+  subscribeWorld((state) => {
+    if (state.jumping) return;
     aboutWorldNameEl.textContent = currentWorld().name;
+    worldCards.forEach((card, index) => {
+      card.setAttribute("aria-pressed", String(index === state.index));
+    });
   });
 
   aboutCloseBtn.addEventListener("click", closePanel);
+  worldCards.forEach((card, index) => {
+    card.addEventListener("click", () => jumpToWorld(index));
+  });
 </script>

@@ -30,16 +30,20 @@ export function currentWorld() {
 
 let autoJumpTimer: number | undefined;
 
-function advanceWorld() {
+function transitionTo(index: number) {
   if (state.jumping) return;
   state.jumping = true;
   notify();
 
   setTimeout(() => {
-    state.index = (state.index + 1) % WORLDS.length;
+    state.index = index;
     state.jumping = false;
     notify();
   }, JUMP_TRANSITION_MS);
+}
+
+function advanceWorld() {
+  transitionTo((state.index + 1) % WORLDS.length);
 }
 
 export function startAutoJump() {
@@ -47,10 +51,14 @@ export function startAutoJump() {
   autoJumpTimer = window.setInterval(advanceWorld, AUTO_JUMP_INTERVAL_MS);
 }
 
-export function jumpWorld() {
-  if (state.jumping) return;
-  advanceWorld();
+export function jumpToWorld(index: number) {
+  if (state.jumping || index === state.index) return;
+  transitionTo(index);
   ensurePlaying();
   // Restart the countdown so a manual jump isn't followed by an auto one right away.
   startAutoJump();
+}
+
+export function jumpWorld() {
+  jumpToWorld((state.index + 1) % WORLDS.length);
 }
