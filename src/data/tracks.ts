@@ -84,4 +84,6 @@ export const TRACKS: Track[] = [
     artist: "futureville",
     videoId: "0d-btH4e14g",
   },
+  { title: "Aria Math", artist: "C418", videoId: "maWHojZTnTg" },
+  { title: "Sirens", artist: "Ludwig Göransson", videoId: "2_-XPMYQmXc" },
 ];
