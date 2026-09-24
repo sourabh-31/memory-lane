@@ -6,6 +6,7 @@ import meridianCrest from "../assets/images/meridian-crest.avif";
 import obsidra from "../assets/images/obsidra.avif";
 import selune from "../assets/images/selune.avif";
 import arkanePrime from "../assets/images/arkane-prime.avif";
+import veloran from "../assets/images/veloran.avif";
 
 export interface World {
   name: string;
@@ -19,5 +20,6 @@ export const WORLDS: World[] = [
   { name: "Meridian Crest", coords: "6.19°N  88.51°E", image: meridianCrest },
   { name: "Obsidra", coords: "58.02°N  121.36°E", image: obsidra },
   { name: "Selune", coords: "9.73°N  47.15°W", image: selune },
-  { name: "Arkane Prime", coords: "22.56°S  76.94°E", image: arkanePrime },
+  { name: "Arkane Prime", coords: "22.56°S  76.94°W", image: arkanePrime },
+  { name: "Veloran", coords: "67.24°S  34.70°E", image: veloran },
 ];
